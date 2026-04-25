@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # Configures an Ubuntu server so that localhost resolves to 127.0.0.2 and facebook.com to 8.8.8.8
 
-sudo sed -i '/localhost/d' /etc/hosts
-sudo sed -i '/facebook.com/d' /etc/hosts
+# استبدال أي سطر يبدأ بـ 127.0.0.1 ليكون 127.0.0.2
+sudo sed -i 's/^127.0.0.1 localhost/127.0.0.2 localhost/' /etc/hosts
 
-echo "127.0.0.2 localhost" | sudo tee -a /etc/hosts > /dev/null
-echo "8.8.8.8 facebook.com" | sudo tee -a /etc/hosts > /dev/null
+# التأكد من وجود سطر فيسبوك (إذا كان موجوداً يعدله، وإذا لم يوجد يضيفه)
+if grep -q "facebook.com" /etc/hosts; then
+    sudo sed -i 's/.*facebook.com/8.8.8.8 facebook.com/' /etc/hosts
+else
+    echo "8.8.8.8 facebook.com" | sudo tee -a /etc/hosts > /dev/null
+fi
